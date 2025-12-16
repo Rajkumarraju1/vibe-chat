@@ -13,7 +13,9 @@ import AdOverlay from "../components/AdOverlay";
 
 const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5000";
 
-export default function VideoChat() {
+import { Suspense } from "react";
+
+function VideoChatContent() {
     const searchParams = useSearchParams();
     const myGender = searchParams.get("gender") || "unknown";
 
@@ -306,5 +308,13 @@ export default function VideoChat() {
                 onClose={() => setShowAdOverlay(false)}
             />
         </div >
+    );
+}
+
+export default function VideoChat() {
+    return (
+        <Suspense fallback={<div className="h-screen bg-black text-white flex items-center justify-center">Loading Vibe...</div>}>
+            <VideoChatContent />
+        </Suspense>
     );
 }
