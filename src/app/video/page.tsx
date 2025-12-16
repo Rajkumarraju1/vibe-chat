@@ -11,7 +11,7 @@ import PremiumModal from "../components/PremiumModal";
 import AdBanner from "../components/AdBanner";
 import AdOverlay from "../components/AdOverlay";
 
-const SOCKET_URL = "http://localhost:5000";
+const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5000";
 
 export default function VideoChat() {
     const searchParams = useSearchParams();

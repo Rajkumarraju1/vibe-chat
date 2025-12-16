@@ -11,7 +11,7 @@ declare global {
     }
 }
 
-const SOCKET_URL = "http://localhost:5000";
+const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5000";
 
 interface PremiumModalProps {
     isOpen: boolean;
