@@ -171,10 +171,10 @@ function VideoChatContent() {
 
 
             {/* Main Content Area */}
-            <div className="flex-1 flex flex-col md:flex-row min-h-0">
+            <div className="flex-1 flex flex-col md:flex-row min-h-0 overflow-hidden">
 
                 {/* Video Stage */}
-                <div className="flex-1 relative bg-neutral-900 flex items-center justify-center p-4">
+                <div className="md:flex-1 h-[40dvh] md:h-auto relative bg-neutral-900 flex items-center justify-center p-4">
                     {/* Partner Video (Main) */}
                     <div className="relative w-full h-full max-h-full rounded-2xl overflow-hidden bg-black shadow-2xl ring-1 ring-white/10">
                         {searching ? (
@@ -223,7 +223,7 @@ function VideoChatContent() {
                     </div>
 
                     {/* My Video (Draggable/Fixed Overlay) */}
-                    <div className="absolute top-8 right-8 w-48 aspect-video bg-black rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)] border-2 border-white/10 hover:border-purple-500 transition-colors group">
+                    <div className="absolute top-4 right-4 w-24 md:top-8 md:right-8 md:w-48 aspect-video bg-black rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)] border-2 border-white/10 hover:border-purple-500 transition-colors group">
                         <video
                             ref={myVideo}
                             playsInline
@@ -239,7 +239,7 @@ function VideoChatContent() {
                 </div>
 
                 {/* Chat Sidebar */}
-                <div className="w-full md:w-96 bg-neutral-950 border-l border-white/5 flex flex-col z-30 shadow-2xl">
+                <div className="flex-1 min-h-0 md:h-auto w-full md:w-96 bg-neutral-950 border-l border-white/5 flex flex-col z-30 shadow-2xl">
                     <div className="p-4 border-b border-white/5 bg-neutral-900/50">
                         <h2 className="text-sm font-semibold text-neutral-400 uppercase tracking-wider">Chat</h2>
                     </div>
