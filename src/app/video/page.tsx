@@ -195,7 +195,7 @@ function VideoChatContent() {
                         )}
 
                         {/* Controls Overlay */}
-                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 px-6 py-3 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 shadow-xl opacity-0 hover:opacity-100 transition-opacity duration-300">
+                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 px-6 py-3 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 shadow-xl opacity-100 md:opacity-0 md:hover:opacity-100 transition-opacity duration-300">
                             <button onClick={toggleMic} className={clsx("p-3 rounded-full transition-colors", micOn ? "bg-white/10 hover:bg-white/20" : "bg-red-500/80 text-white")}>
                                 {micOn ? <Mic size={20} /> : <MicOff size={20} />}
                             </button>
@@ -207,11 +207,11 @@ function VideoChatContent() {
                             <div className="h-8 w-px bg-white/10 mx-1"></div>
                             <button onClick={() => setShowPremiumModal(true)} className="p-3 rounded-full bg-white/10 hover:bg-purple-500/20 text-white hover:text-purple-400 transition-colors group relative">
                                 <Users size={20} />
-                                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Gender</span>
+                                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 text-[10px] px-2 py-1 rounded opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity whitespace-nowrap">Gender</span>
                             </button>
                             <button onClick={() => setShowPremiumModal(true)} className="p-3 rounded-full bg-white/10 hover:bg-blue-500/20 text-white hover:text-blue-400 transition-colors group relative">
                                 <Globe size={20} />
-                                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Country</span>
+                                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 text-[10px] px-2 py-1 rounded opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity whitespace-nowrap">Country</span>
                             </button>
                             <div className="h-8 w-px bg-white/10 mx-1"></div>
 
