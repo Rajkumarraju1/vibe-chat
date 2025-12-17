@@ -4,12 +4,8 @@ import { X, Check } from "lucide-react";
 import { useState } from "react";
 import { io } from "socket.io-client";
 
-// Define Razorpay on window
-declare global {
-    interface Window {
-        Razorpay: any;
-    }
-}
+// Razorpay types removed
+
 
 const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5000";
 
@@ -21,84 +17,46 @@ interface PremiumModalProps {
 
 export default function PremiumModal({ isOpen, onClose, socketId }: PremiumModalProps) {
     const [loading, setLoading] = useState(false);
+    const [isVerifyMode, setIsVerifyMode] = useState(false);
 
-    const handlePayment = async () => {
+    const handlePayment = () => {
+        // Open Cosmofeed/Topmate Link
+        window.open("https://superprofile.bio/httpswwwvibemelive", "_blank");
+        setIsVerifyMode(true);
+    };
+
+    const handleVerify = async () => {
         setLoading(true);
         try {
-            // 1. Create Order
-            const res = await fetch(`${SOCKET_URL}/create-order`, { method: "POST" });
-            const order = await res.json();
+            // Socket ID is needed. 
+            // Since we don't have it in props yet (legacy issue), we try to get it from window or just alert.
+            // But wait, the previous code had: const socketId = (window as any).socketId;
+            // We should stick to that hack for this file unless we pass it properly.
 
-            if (!order || !order.id) {
-                alert("Server error creating order");
+            const effectiveSocketId = socketId || (window as any).socketId;
+
+            if (!effectiveSocketId) {
+                alert("Connection not found. Please refresh and try again.");
                 setLoading(false);
                 return;
             }
 
-            // 2. Open Razorpay
-            const options = {
-                key: "rzp_test_RQzTCSQezDt3qq", // Enter user's Test Key ID here in future
-                amount: order.amount,
-                currency: order.currency,
-                name: "Vibe Random Chat",
-                description: "Vibe+ Premium Subscription",
-                order_id: order.id,
-                handler: async function (response: any) {
-                    // 3. Verify Payment
-                    const socketId = (window as any).socketId; // We need to pass socketId somehow, or handle session better
-                    // For now, let's just use the socket ID from the connection... 
-                    // Wait, we don't have socket access here easily. 
-                    // Let's assume the user is connected and the server knows the socket ID from the request or we pass it? 
-                    // Actually, the server endpoint /verify-payment needs socketId to update the user object.
-                    // Ideally we should pass socketId prop to this modal.
+            const res = await fetch(`${SOCKET_URL}/verify-payment`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ socketId: effectiveSocketId }),
+            });
 
-                    // Simple fix: We will trust the server to handle session or we pass it if we had it.
-                    // For this MVP, let's just send the verification.
-                    // We need the socket instance to tell the server "Hey I paid".
-
-                    /* 
-                       Better approach for this specific architecture:
-                       The server has an array `users`. When verifying, we need to tell it WHICH user to upgrade.
-                       The `io` socket instance on the VideoPage knows its own ID.
-                       We should pass the socket ID to this Modal.
-                    */
-
-                    // TEMPORARY: Just verifying the payment. The upgrade logic relies on socketId.
-                    // We will add socketId prop in next step.
-
-                    const verifyRes = await fetch(`${SOCKET_URL}/verify-payment`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            razorpay_order_id: response.razorpay_order_id,
-                            razorpay_payment_id: response.razorpay_payment_id,
-                            razorpay_signature: response.razorpay_signature,
-                            socketId: socketId
-                        }),
-                    });
-
-                    const verifyData = await verifyRes.json();
-                    if (verifyData.status === "success") {
-                        alert("Upgrade Successful! You are now Vibe+ Premium.");
-                        onClose();
-                    } else {
-                        alert("Payment verification failed.");
-                    }
-                },
-                prefill: {
-                    name: "Vibe User",
-                    email: "user@example.com",
-                    contact: "9999999999",
-                },
-                theme: {
-                    color: "#9333ea",
-                },
-            };
-
-            const rzp1 = new window.Razorpay(options);
-            rzp1.open();
+            const data = await res.json();
+            if (data.status === "success") {
+                alert("Upgrade Successful! You are now Vibe+ Premium.");
+                onClose();
+            } else {
+                // In a real app we would check a webhook status here
+                alert("Verification failed. Please try again or contact support.");
+            }
         } catch (error) {
-            console.error("Payment failed", error);
+            console.error("Verification failed", error);
             alert("Something went wrong");
         } finally {
             setLoading(false);
@@ -159,13 +117,33 @@ export default function PremiumModal({ isOpen, onClose, socketId }: PremiumModal
                         </div>
                     </div>
 
-                    <button
-                        onClick={handlePayment}
-                        disabled={loading}
-                        className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold text-lg rounded-xl shadow-lg transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-wait"
-                    >
-                        {loading ? "Processing..." : "Get Vibe+ for ₹999/mo"}
-                    </button>
+                    {!isVerifyMode ? (
+                        <button
+                            onClick={handlePayment}
+                            className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold text-lg rounded-xl shadow-lg transform hover:scale-[1.02] transition-all"
+                        >
+                            Get Vibe+ for ₹99
+                        </button>
+                    ) : (
+                        <div className="space-y-3">
+                            <p className="text-sm text-yellow-400">
+                                Please change 'quantity' to 1 if needed and complete payment.
+                            </p>
+                            <button
+                                onClick={handleVerify}
+                                disabled={loading}
+                                className="w-full py-4 bg-green-600 hover:bg-green-500 text-white font-bold text-lg rounded-xl shadow-lg transform hover:scale-[1.02] transition-all disabled:opacity-50"
+                            >
+                                {loading ? "Verifying..." : "I have paid, Enable Premium"}
+                            </button>
+                            <button
+                                onClick={() => setIsVerifyMode(false)}
+                                className="text-sm text-neutral-400 hover:text-white underline"
+                            >
+                                Back
+                            </button>
+                        </div>
+                    )}
 
                     <p className="text-xs text-neutral-500">
                         Secure processing. Cancel anytime.

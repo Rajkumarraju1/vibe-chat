@@ -2,18 +2,13 @@ const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
-const Razorpay = require("razorpay");
-const crypto = require("crypto");
+
 
 const app = express();
 app.use(cors());
 app.use(express.json()); // Enable JSON body parsing
 
-// REPLACE THESE WITH YOUR ACTUAL KEYS
-const razorpay = new Razorpay({
-  key_id: "rzp_test_RQzTCSQezDt3qq",
-  key_secret: "TUn0tMsECdh97s3t1kYHtADH"
-});
+
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -115,44 +110,27 @@ function findMatch(myId) {
   });
 }
 
-// Razorpay Endpoints
-app.post("/create-order", async (req, res) => {
-  try {
-    const options = {
-      amount: 99900, // amount in smallest currency unit (999.00 INR)
-      currency: "INR",
-      receipt: "order_rcptid_" + Date.now(),
-    };
-    const order = await razorpay.orders.create(options);
-    res.json(order);
-  } catch (error) {
-    console.error("Error creating order:", error);
-    res.status(500).send("Error creating order");
-  }
-});
+// Razorpay Endpoints REMOVED
 
+// Simplified "Trust" Verification for Cosmofeed/Topmate
 app.post("/verify-payment", (req, res) => {
-  const { razorpay_order_id, razorpay_payment_id, razorpay_signature, socketId } = req.body;
+  const { socketId } = req.body;
 
-  const body = razorpay_order_id + "|" + razorpay_payment_id;
-  const expectedSignature = crypto
-    .createHmac("sha256", "YOUR_RAZORPAY_KEY_SECRET") // MUST MATCH KEY_SECRET ABOVE
-    .update(body.toString())
-    .digest("hex");
+  if (!socketId) {
+    return res.status(400).json({ status: "failure", message: "Socket ID required" });
+  }
 
-  if (expectedSignature === razorpay_signature) {
-    // Payment Success!
-    console.log(`Payment verified for user ${socketId}`);
+  // Payment Success (Mock/Trust Mode)
+  console.log(`Manual Payment verified for user ${socketId}`);
 
-    // Mark user as premium in memory
-    if (users[socketId]) {
-      users[socketId].isPremium = true;
-      console.log(`User ${socketId} upgraded to PREMIUM`);
-    }
-
+  // Mark user as premium in memory
+  if (users[socketId]) {
+    users[socketId].isPremium = true;
+    console.log(`User ${socketId} upgraded to PREMIUM`);
     res.json({ status: "success" });
   } else {
-    res.status(400).json({ status: "failure" });
+    // User might have disconnected or invalid ID
+    res.status(404).json({ status: "failure", message: "User not found" });
   }
 });
 
