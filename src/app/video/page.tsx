@@ -195,7 +195,7 @@ function VideoChatContent() {
                         )}
 
                         {/* Controls Overlay */}
-                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 px-6 py-3 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 shadow-xl opacity-100 md:opacity-0 md:hover:opacity-100 transition-opacity duration-300">
+                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 px-4 py-2 bg-black/30 backdrop-blur-md rounded-full border border-white/10 shadow-lg opacity-100 md:opacity-0 md:hover:opacity-100 transition-all duration-300">
                             <button onClick={toggleMic} className={clsx("p-3 rounded-full transition-colors", micOn ? "bg-white/10 hover:bg-white/20" : "bg-red-500/80 text-white")}>
                                 {micOn ? <Mic size={20} /> : <MicOff size={20} />}
                             </button>
