@@ -204,16 +204,16 @@ function VideoChatContent() {
                             </button>
 
                             {/* Filter Buttons (Trigger Premium) */}
-                            <div className="h-8 w-px bg-white/10 mx-1"></div>
-                            <button onClick={() => setShowPremiumModal(true)} className="p-3 rounded-full bg-white/10 hover:bg-purple-500/20 text-white hover:text-purple-400 transition-colors group relative">
+                            <div className="hidden md:block h-8 w-px bg-white/10 mx-1"></div>
+                            <button onClick={() => setShowPremiumModal(true)} className="hidden md:block p-3 rounded-full bg-white/10 hover:bg-purple-500/20 text-white hover:text-purple-400 transition-colors group relative">
                                 <Users size={20} />
-                                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 text-[10px] px-2 py-1 rounded opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity whitespace-nowrap">Gender</span>
+                                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Gender</span>
                             </button>
-                            <button onClick={() => setShowPremiumModal(true)} className="p-3 rounded-full bg-white/10 hover:bg-blue-500/20 text-white hover:text-blue-400 transition-colors group relative">
+                            <button onClick={() => setShowPremiumModal(true)} className="hidden md:block p-3 rounded-full bg-white/10 hover:bg-blue-500/20 text-white hover:text-blue-400 transition-colors group relative">
                                 <Globe size={20} />
-                                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 text-[10px] px-2 py-1 rounded opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity whitespace-nowrap">Country</span>
+                                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Country</span>
                             </button>
-                            <div className="h-8 w-px bg-white/10 mx-1"></div>
+                            <div className="hidden md:block h-8 w-px bg-white/10 mx-1"></div>
 
                             <button onClick={handleSkip} className="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-full font-bold transition-colors flex items-center gap-2">
                                 <SkipForward size={18} fill="currentColor" />
@@ -235,6 +235,24 @@ function VideoChatContent() {
                             <div className="absolute inset-0 flex items-center justify-center bg-neutral-800 text-xs text-neutral-400">Camera Off</div>
                         )}
                         <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/60 rounded text-[10px] text-white/70">You</div>
+                    </div>
+
+                    {/* Mobile Top-Left Filters */}
+                    <div className="absolute top-4 left-4 z-10 flex flex-col gap-2 md:hidden">
+                        <button
+                            onClick={() => setShowPremiumModal(true)}
+                            className="flex items-center gap-2 px-3 py-1.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-full text-xs font-medium text-white hover:bg-black/60 transition-colors"
+                        >
+                            <Users size={14} className="text-purple-400" />
+                            <span>Gender</span>
+                        </button>
+                        <button
+                            onClick={() => setShowPremiumModal(true)}
+                            className="flex items-center gap-2 px-3 py-1.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-full text-xs font-medium text-white hover:bg-black/60 transition-colors"
+                        >
+                            <Globe size={14} className="text-blue-400" />
+                            <span>Country</span>
+                        </button>
                     </div>
                 </div>
 
