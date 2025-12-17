@@ -119,9 +119,12 @@ export default function Home() {
             </div>
 
             {/* Footer Links (AdSense Requirement) */}
-            <div className="mt-8 flex gap-6 justify-center text-xs text-neutral-500">
+            <div className="mt-8 flex flex-wrap gap-4 justify-center text-xs text-neutral-500">
               <Link href="/privacy" className="hover:text-neutral-300 transition-colors">Privacy Policy</Link>
               <Link href="/contact" className="hover:text-neutral-300 transition-colors">Contact Us</Link>
+              <Link href="/terms" className="hover:text-neutral-300 transition-colors">Terms of Service</Link>
+              <Link href="/cancellation-refund" className="hover:text-neutral-300 transition-colors">Cancellation & Refund</Link>
+              <Link href="/shipping" className="hover:text-neutral-300 transition-colors">Shipping Policy</Link>
             </div>
           </div>
         </div>
