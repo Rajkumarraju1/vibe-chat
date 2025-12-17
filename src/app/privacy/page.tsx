@@ -30,7 +30,7 @@ export default function PrivacyPolicy() {
                     <p>Users may opt out of personalized advertising by visiting Ads Settings.</p>
 
                     <h2 className="text-2xl font-semibold text-white mt-8">4. Contact Us</h2>
-                    <p>If you have questions about this policy, please contact us at support@vibeapp.com.</p>
+                    <p>If you have questions about this policy, please contact us at vibemelive@gmail.com.</p>
                 </div>
             </div>
         </div>

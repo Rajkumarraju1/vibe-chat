@@ -22,7 +22,7 @@ export default function ShippingPolicy() {
                     <p>Access to premium features or virtual items is immediate upon successful payment.</p>
 
                     <h2 className="text-2xl font-semibold text-white mt-8">3. Contact Us</h2>
-                    <p>If you have questions, please contact us at support@vibeapp.com.</p>
+                    <p>If you have questions, please contact us at vibemelive@gmail.com.</p>
                 </div>
             </div>
         </div>

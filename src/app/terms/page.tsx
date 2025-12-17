@@ -28,7 +28,7 @@ export default function TermsAndConditions() {
                     <p>The service is provided "as is" and "as available" without any warranties of any kind.</p>
 
                     <h2 className="text-2xl font-semibold text-white mt-8">5. Contact Information</h2>
-                    <p>For any questions regarding these Terms, please contact us at support@vibeapp.com.</p>
+                    <p>For any questions regarding these Terms, please contact us at vibemelive@gmail.com.</p>
                 </div>
             </div>
         </div>

@@ -23,7 +23,7 @@ export default function CancellationRefund() {
                     <p>Refund requests must be made within 7 days of the transaction.</p>
 
                     <h2 className="text-2xl font-semibold text-white mt-8">3. Contact Us</h2>
-                    <p>If you have any questions about our Returns and Refunds Policy, please contact us: support@vibeapp.com</p>
+                    <p>If you have any questions about our Returns and Refunds Policy, please contact us: vibemelive@gmail.com</p>
                 </div>
             </div>
         </div>

@@ -20,8 +20,8 @@ export default function ContactUs() {
                     </div>
                     <div>
                         <p className="text-sm text-neutral-500 font-medium">Email us at</p>
-                        <a href="mailto:support@vibeapp.com" className="text-lg font-bold text-white hover:underline">
-                            support@vibeapp.com
+                        <a href="mailto:vibemelive@gmail.com" className="text-lg font-bold text-white hover:underline">
+                            vibemelive@gmail.com
                         </a>
                     </div>
                 </div>
