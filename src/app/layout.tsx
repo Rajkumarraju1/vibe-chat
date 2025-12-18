@@ -5,17 +5,17 @@ import './globals.css';
 export const metadata: Metadata = {
   metadataBase: new URL('https://vibeme.live'),
   title: {
-    default: 'VibeMe - Premium Random Video Chat',
+    default: 'VibeMe - Free Random Video Chat App',
     template: '%s | VibeMe',
   },
-  description: 'Connect with strangers instantly on VibeMe. High-quality video chat, secure, and fun. Meet new people from around the world today.',
-  keywords: ['video chat', 'random chat', 'talk to strangers', 'omegle alternative', 'video dating', 'make friends', 'live chat'],
+  description: 'Join VibeMe for the best Free Video Chat experience. Connect with strangers instantly, completely free. High-quality, secure, and fun random video chat.',
+  keywords: ['free video chat', 'random chat', 'talk to strangers', 'omegle alternative', 'free chat app', 'make friends', 'live chat'],
   authors: [{ name: 'VibeMe Team' }],
   creator: 'VibeMe',
   publisher: 'VibeMe',
   openGraph: {
-    title: 'VibeMe - Premium Random Video Chat',
-    description: 'Experience crystal clear random video chat. Connect instantly with people worldwide.',
+    title: 'VibeMe - Free Random Video Chat App',
+    description: 'Experience crystal clear free random video chat. Connect instantly with people worldwide for free.',
     url: 'https://vibeme.live',
     siteName: 'VibeMe',
     locale: 'en_US',
@@ -23,8 +23,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'VibeMe - Talk to Strangers Instantly',
-    description: 'Join thousands of users on the most premium random video chat platform.',
+    title: 'VibeMe - Free Random Video Chat',
+    description: 'Join thousands of users on the best free random video chat platform.',
     creator: '@vibeme_live',
   },
   viewport: {
@@ -33,8 +33,8 @@ export const metadata: Metadata = {
     maximumScale: 1,
   },
   icons: {
-    icon: '/favicon.ico', // Ensure you have a favicon
-    apple: '/apple-touch-icon.png', // Optional
+    icon: '/logo.png',
+    apple: '/logo.png',
   },
   alternates: {
     canonical: 'https://vibeme.live',
