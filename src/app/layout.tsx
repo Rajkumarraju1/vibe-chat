@@ -49,6 +49,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9682711224616634"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className="antialiased bg-black text-white h-full">
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"
@@ -70,11 +77,6 @@ export default function RootLayout({
               },
             }),
           }}
-        />
-        <Script
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9682711224616634"
-          crossOrigin="anonymous"
-          strategy="beforeInteractive"
         />
         {children}
         <CookieConsent />
