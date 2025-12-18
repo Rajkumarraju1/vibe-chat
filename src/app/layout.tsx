@@ -9,13 +9,13 @@ export const metadata: Metadata = {
     template: '%s | VibeMe',
   },
   description: 'Join VibeMe for the best Free Video Chat experience. Connect with strangers instantly, completely free. High-quality, secure, and fun random video chat.',
-  keywords: ['free video chat', 'random chat', 'talk to strangers', 'omegle alternative', 'free chat app', 'make friends', 'live chat'],
+  keywords: ['free video chat', 'random chat', 'talk to strangers', 'omegle', 'ometv', 'omegle alternative', 'ometv alternative', 'chatroulette', 'free chat app', 'make friends', 'live chat', 'online video chat'],
   authors: [{ name: 'VibeMe Team' }],
   creator: 'VibeMe',
   publisher: 'VibeMe',
   openGraph: {
     title: 'VibeMe - Free Random Video Chat App',
-    description: 'Experience crystal clear free random video chat. Connect instantly with people worldwide for free.',
+    description: 'Experience crystal clear free random video chat. The best alternative for meeting new people worldwide.',
     url: 'https://vibeme.live',
     siteName: 'VibeMe',
     locale: 'en_US',
@@ -59,8 +59,9 @@ export default function RootLayout({
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'WebSite',
-              name: 'VibeMe',
+              name: 'VibeMe - Free Random Video Chat',
               url: 'https://vibeme.live',
+              description: 'The best free alternative to Omegle and OmeTV for random video chat.',
               potentialAction: {
                 '@type': 'SearchAction',
                 target: 'https://vibeme.live/search?q={search_term_string}',

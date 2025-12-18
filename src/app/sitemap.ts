@@ -22,6 +22,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: 'monthly',
             priority: 0.5,
         },
-        // Add more dynamic routes here if needed in the future
+        {
+            url: `${baseUrl}/video`,
+            lastModified: new Date(),
+            changeFrequency: 'daily',
+            priority: 0.8,
+        },
     ];
 }
