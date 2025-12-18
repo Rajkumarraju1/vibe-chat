@@ -271,12 +271,82 @@ function VideoChatContent() {
                         <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/60 rounded text-[10px] text-white/70">You</div>
                     </div>
                 </div>
+
+                {/* Chat Sidebar */}
+                <div className="flex-1 min-h-0 md:h-auto w-full md:w-96 bg-neutral-950 border-l border-white/5 flex flex-col z-30 shadow-2xl">
+                    <div className="p-4 border-b border-white/5 bg-neutral-900/50">
+                        <h2 className="text-sm font-semibold text-neutral-400 uppercase tracking-wider">Chat</h2>
+                    </div>
+                    {/* Messages */}
+                    <div className="flex-1 p-4 overflow-y-auto space-y-4 scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent">
+                        <div className="text-center text-xs text-neutral-600 my-4">
+                            You are chatting with a random stranger. Say Hi!
+                        </div>
+                        {chat.map((msg, i) => (
+                            <div key={i} className={clsx("flex flex-col max-w-[85%]", msg.sender === "You" ? "ml-auto items-end" : "mr-auto items-start")}>
+                                <div className={clsx("px-4 py-2 rounded-2xl text-sm",
+                                    msg.sender === "You"
+                                        ? "bg-purple-600 text-white rounded-br-none"
+                                        : "bg-neutral-800 text-neutral-200 rounded-bl-none"
+                                )}>
+                                    {msg.text}
+                                </div>
+                                <span className="text-[10px] text-neutral-600 mt-1 px-1">{msg.sender}</span>
+                            </div>
+                        ))}
+                        {searching && !chat.length && (
+                            <div className="flex flex-col items-center justify-center h-full text-neutral-600 pb-10 opacity-50">
+                                <p className="text-sm">Connecting...</p>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Banner Ad */}
+                    <div className="bg-neutral-900 border-t border-white/5">
+                        <AdBanner />
+                    </div>
+
+                    {/* Input */}
+                    <div className="p-4 bg-black/20 backdrop-blur border-t border-white/5">
+                        <div className="flex gap-2 relative">
+                            <input
+                                value={message}
+                                onChange={e => setMessage(e.target.value)}
+                                onKeyDown={e => e.key === 'Enter' && sendMessage()}
+                                placeholder="Type a message..."
+                                disabled={searching}
+                                className="w-full bg-neutral-900/80 text-white border border-white/10 rounded-xl pl-4 pr-12 py-3.5 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 placeholder:text-neutral-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            />
+                            <button
+                                onClick={sendMessage}
+                                disabled={searching || !message.trim()}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors disabled:opacity-0 disabled:scale-75 transform duration-200"
+                            >
+                                <Send size={16} />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <PremiumModal
+                isOpen={showPremiumModal}
+                onClose={() => setShowPremiumModal(false)}
+                socketId={socket?.id}
+                onRewardComplete={handlePremiumUnlock}
+            />
+            <AdOverlay
+                isOpen={showAdOverlay}
+                onClose={() => setShowAdOverlay(false)}
+            />
+        </div>
+    );
 }
 
-                export default function VideoChat() {
+export default function VideoChat() {
     return (
-                <Suspense fallback={<div className="h-screen bg-black text-white flex items-center justify-center">Loading Vibe...</div>}>
-                    <VideoChatContent />
-                </Suspense>
-                );
+        <Suspense fallback={<div className="h-screen bg-black text-white flex items-center justify-center">Loading Vibe...</div>}>
+            <VideoChatContent />
+        </Suspense>
+    );
 }

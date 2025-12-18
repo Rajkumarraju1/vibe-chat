@@ -13,9 +13,10 @@ interface PremiumModalProps {
     isOpen: boolean;
     onClose: () => void;
     socketId?: string;
+    onRewardComplete?: (expiry: number) => void;
 }
 
-export default function PremiumModal({ isOpen, onClose, socketId }: PremiumModalProps) {
+export default function PremiumModal({ isOpen, onClose, socketId, onRewardComplete }: PremiumModalProps) {
     const [loading, setLoading] = useState(false);
     const [adState, setAdState] = useState<'idle' | 'playing' | 'completed'>('idle');
     const [timeLeft, setTimeLeft] = useState(30);
@@ -57,9 +58,9 @@ export default function PremiumModal({ isOpen, onClose, socketId }: PremiumModal
             if (data.status === "success") {
                 setAdState('completed');
                 setTimeout(() => {
-                    alert(`features unlocked for 2 Minutes!`);
+                    if (onRewardComplete) onRewardComplete(data.expiry);
                     onClose();
-                    setAdState('idle'); // Reset for next time
+                    setAdState('idle');
                 }, 500);
             } else {
                 alert("Something went wrong. Try again.");
