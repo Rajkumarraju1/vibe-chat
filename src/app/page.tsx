@@ -126,7 +126,7 @@ export default function Home() {
               </h2>
               <div className="text-neutral-400 space-y-6 leading-relaxed text-sm md:text-base">
                 <p>
-                  VibeMe is the premier destination for free random video chat, offering a modern and secure alternative to platforms like Omegle and OmeTV. Our mission is to connect people from all corners of the globe instantly, fostering new friendships and meaningful conversations without barriers. We believe in the power of face-to-face interaction to bridge cultural gaps and bring the world closer together.
+                  VibeMe is the premier destination for free random video chat, offering a modern and secure alternative to traditional random chat platforms. Our mission is to connect people from all corners of the globe instantly, fostering new friendships and meaningful conversations without barriers. We believe in the power of face-to-face interaction to bridge cultural gaps and bring the world closer together.
                 </p>
                 <p>
                   Unlike other random chat sites, VibeMe prioritizes user experience with high-definition video quality, low-latency connections, and mobile-optimized design. Whether you are looking to make new friends, practice a new language, or simply kill time, our platform provides a safe and engaging environment. We employ community monitoring and reporting features to ensure a respectful atmosphere for all users.
