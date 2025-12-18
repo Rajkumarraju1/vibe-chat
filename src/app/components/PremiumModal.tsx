@@ -124,7 +124,7 @@ export default function PremiumModal({ isOpen, onClose, socketId }: PremiumModal
                         <div className="space-y-3 text-left bg-neutral-800/50 p-6 rounded-2xl border border-white/5">
                             <div className="flex items-center gap-3">
                                 <div className="p-1 bg-green-500/20 text-green-400 rounded-full"><Check size={14} /></div>
-                                <span>Filter by <strong>Gender</strong></span>
+                                <span>Filter by <strong>Female</strong></span>
                             </div>
                             <div className="flex items-center gap-3">
                                 <div className="p-1 bg-green-500/20 text-green-400 rounded-full"><Check size={14} /></div>

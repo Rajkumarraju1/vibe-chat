@@ -29,7 +29,12 @@ function VideoChatContent() {
     const [micOn, setMicOn] = useState(true);
     const [camOn, setCamOn] = useState(true);
 
+    // Filters & Premium
+    // Filters & Premium
+    const [targetGender, setTargetGender] = useState<string>("any");
+    const [premiumExpiry, setPremiumExpiry] = useState<number | null>(null);
     const [showPremiumModal, setShowPremiumModal] = useState(false);
+
     // Ads State
     const [skips, setSkips] = useState(0);
     const [showAdOverlay, setShowAdOverlay] = useState(false);
@@ -41,6 +46,8 @@ function VideoChatContent() {
 
     // Initial Setup
     useEffect(() => {
+        let socketInstance: Socket;
+
         // 1. Get User Media
         navigator.mediaDevices
             .getUserMedia({ video: true, audio: true })
@@ -49,11 +56,11 @@ function VideoChatContent() {
                 if (myVideo.current) myVideo.current.srcObject = currentStream;
 
                 // 2. Connect to Socket
-                const socketInstance = io(SOCKET_URL);
+                socketInstance = io(SOCKET_URL);
                 setSocket(socketInstance);
 
                 // 3. Initiate Search
-                socketInstance.emit("join_pool", { gender: myGender });
+                socketInstance.emit("join_pool", { gender: myGender, targetGender });
 
                 socketInstance.on("matched", ({ partnerId, initiator }) => {
                     setSearching(false);
@@ -67,14 +74,18 @@ function VideoChatContent() {
                 });
 
                 socketInstance.on("partner_left", () => {
-                    handleSkip(); // Auto-skip if partner leaves
+                    setPartnerStream(null);
+                    setChat([]);
+                    setSearching(true);
+                    // Re-search with current prefs
+                    socketInstance.emit("join_pool", { gender: myGender, targetGender: "any" }); // Default safe re-join, we rely on handleSkip mostly
                 });
 
             })
             .catch((err) => console.error("Error accessing media:", err));
 
         return () => {
-            if (socket) socket.disconnect();
+            if (socketInstance) socketInstance.disconnect();
             if (stream) stream.getTracks().forEach(track => track.stop());
         }
     }, []);
@@ -123,8 +134,6 @@ function VideoChatContent() {
         }
         setPartnerStream(null);
         setChat([]);
-        setPartnerStream(null);
-        setChat([]);
         setSearching(true);
 
         const newSkips = skips + 1;
@@ -134,10 +143,23 @@ function VideoChatContent() {
             setShowAdOverlay(true);
         }
 
+        // Check Expiry Logic
+        let currentTarget = targetGender;
+
+        if (premiumExpiry && Date.now() > premiumExpiry) {
+            // Expired!
+            setPremiumExpiry(null);
+            setTargetGender("any");
+            currentTarget = "any";
+            alert("Premium time ended. Returning to random matches.");
+        }
+
         if (socket) {
-            socket.emit("join_pool", { gender: myGender });
+            socket.emit("join_pool", { gender: myGender, targetGender: currentTarget });
         }
     };
+
+    // ... (rest kept same, see below for render changes)
 
     const toggleMic = () => {
         if (stream) {
@@ -153,6 +175,16 @@ function VideoChatContent() {
         }
     }
 
+    const handlePremiumUnlock = (expiry: number) => {
+        setTargetGender("female");
+        setPremiumExpiry(expiry);
+        setShowPremiumModal(false);
+
+        setTimeout(() => {
+            handleSkip();
+        }, 500);
+    };
+
     return (
         <div className="h-screen bg-black text-white flex flex-col font-sans overflow-hidden">
             {/* Top Bar */}
@@ -160,19 +192,27 @@ function VideoChatContent() {
                 <div className="flex items-center gap-3">
                     <Image src="/logo.png" alt="Vibe" width={32} height={32} />
                     <h1 className="font-bold text-lg tracking-tight">Vibe</h1>
-                </div>        </div>
-            <div className="text-sm font-medium px-4 py-1.5 rounded-full bg-white/5 border border-white/10">
-                {searching ? (
-                    <span className="text-yellow-400 animate-pulse">Searching for partner...</span>
-                ) : (
-                    <span className="text-green-400">Connected to Stranger</span>
-                )}
+                </div>
             </div>
 
+            {/* Status Bar */}
+            <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30">
+                <div className="text-sm font-medium px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md flex items-center gap-2">
+                    {premiumExpiry && premiumExpiry > Date.now() && (
+                        <span className="text-pink-500 text-xs font-bold border-r border-white/10 pr-2 mr-2">
+                            FEMALE FILTER ACTIVE
+                        </span>
+                    )}
+                    {searching ? (
+                        <span className="text-yellow-400 animate-pulse">Searching...</span>
+                    ) : (
+                        <span className="text-green-400">Connected</span>
+                    )}
+                </div>
+            </div>
 
             {/* Main Content Area */}
             <div className="flex-1 flex flex-col md:flex-row min-h-0 overflow-hidden">
-
                 {/* Video Stage */}
                 <div className="md:flex-1 h-[40dvh] md:h-auto relative bg-neutral-900 flex items-center justify-center p-4">
                     {/* Partner Video (Main) */}
@@ -206,8 +246,10 @@ function VideoChatContent() {
                             {/* Filter Buttons (Trigger Premium) */}
                             <div className="hidden md:block h-8 w-px bg-white/10 mx-1"></div>
                             <button onClick={() => setShowPremiumModal(true)} className="hidden md:block p-3 rounded-full bg-white/10 hover:bg-purple-500/20 text-white hover:text-purple-400 transition-colors group relative">
-                                <Users size={20} />
-                                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Gender</span>
+                                <Users size={20} className={targetGender === 'female' ? "text-pink-500" : ""} />
+                                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                    {targetGender === 'female' ? "Filter Active" : "Filter Female"}
+                                </span>
                             </button>
                             <button onClick={() => setShowPremiumModal(true)} className="hidden md:block p-3 rounded-full bg-white/10 hover:bg-blue-500/20 text-white hover:text-blue-400 transition-colors group relative">
                                 <Globe size={20} />
@@ -222,117 +264,19 @@ function VideoChatContent() {
                         </div>
                     </div>
 
-                    {/* My Video (Draggable/Fixed Overlay) */}
+                    {/* My Video */}
                     <div className="absolute top-4 right-4 w-24 md:top-8 md:right-8 md:w-48 aspect-video bg-black rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)] border-2 border-white/10 hover:border-purple-500 transition-colors group">
-                        <video
-                            ref={myVideo}
-                            playsInline
-                            autoPlay
-                            muted
-                            className={clsx("w-full h-full object-cover mirror-mode transition-opacity", !camOn && "opacity-0")}
-                        />
-                        {!camOn && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-neutral-800 text-xs text-neutral-400">Camera Off</div>
-                        )}
+                        <video ref={myVideo} playsInline autoPlay muted className={clsx("w-full h-full object-cover mirror-mode transition-opacity", !camOn && "opacity-0")} />
+                        {!camOn && <div className="absolute inset-0 flex items-center justify-center bg-neutral-800 text-xs text-neutral-400">Camera Off</div>}
                         <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/60 rounded text-[10px] text-white/70">You</div>
                     </div>
-
-                    {/* Mobile Top-Left Filters */}
-                    <div className="absolute top-4 left-4 z-10 flex flex-col gap-2 md:hidden">
-                        <button
-                            onClick={() => setShowPremiumModal(true)}
-                            className="flex items-center gap-2 px-3 py-1.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-full text-xs font-medium text-white hover:bg-black/60 transition-colors"
-                        >
-                            <Users size={14} className="text-purple-400" />
-                            <span>Gender</span>
-                        </button>
-                        <button
-                            onClick={() => setShowPremiumModal(true)}
-                            className="flex items-center gap-2 px-3 py-1.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-full text-xs font-medium text-white hover:bg-black/60 transition-colors"
-                        >
-                            <Globe size={14} className="text-blue-400" />
-                            <span>Country</span>
-                        </button>
-                    </div>
                 </div>
-
-                {/* Chat Sidebar */}
-                <div className="flex-1 min-h-0 md:h-auto w-full md:w-96 bg-neutral-950 border-l border-white/5 flex flex-col z-30 shadow-2xl">
-                    <div className="p-4 border-b border-white/5 bg-neutral-900/50">
-                        <h2 className="text-sm font-semibold text-neutral-400 uppercase tracking-wider">Chat</h2>
-                    </div>
-
-                    {/* Messages */}
-                    <div className="flex-1 p-4 overflow-y-auto space-y-4 scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent">
-                        <div className="text-center text-xs text-neutral-600 my-4">
-                            You are chatting with a random stranger. Say Hi!
-                        </div>
-                        {chat.map((msg, i) => (
-                            <div key={i} className={clsx("flex flex-col max-w-[85%]", msg.sender === "You" ? "ml-auto items-end" : "mr-auto items-start")}>
-                                <div className={clsx("px-4 py-2 rounded-2xl text-sm",
-                                    msg.sender === "You"
-                                        ? "bg-purple-600 text-white rounded-br-none"
-                                        : "bg-neutral-800 text-neutral-200 rounded-bl-none"
-                                )}>
-                                    {msg.text}
-                                </div>
-                                <span className="text-[10px] text-neutral-600 mt-1 px-1">{msg.sender}</span>
-                            </div>
-                        ))}
-                        {searching && !chat.length && (
-                            <div className="flex flex-col items-center justify-center h-full text-neutral-600 pb-10 opacity-50">
-                                <p className="text-sm">Connecting...</p>
-                            </div>
-                        )}
-                    </div>
-
-
-
-                    {/* Banner Ad */}
-                    <div className="bg-neutral-900 border-t border-white/5">
-                        <AdBanner />
-                    </div>
-
-                    {/* Input */}
-                    <div className="p-4 bg-black/20 backdrop-blur border-t border-white/5">
-                        <div className="flex gap-2 relative">
-                            <input
-                                value={message}
-                                onChange={e => setMessage(e.target.value)}
-                                onKeyDown={e => e.key === 'Enter' && sendMessage()}
-                                placeholder="Type a message..."
-                                disabled={searching}
-                                className="w-full bg-neutral-900/80 text-white border border-white/10 rounded-xl pl-4 pr-12 py-3.5 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 placeholder:text-neutral-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                            />
-                            <button
-                                onClick={sendMessage}
-                                disabled={searching || !message.trim()}
-                                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors disabled:opacity-0 disabled:scale-75 transform duration-200"
-                            >
-                                <Send size={16} />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <PremiumModal
-                isOpen={showPremiumModal}
-                onClose={() => setShowPremiumModal(false)}
-                socketId={socket?.id}
-            />
-            <AdOverlay
-                isOpen={showAdOverlay}
-                onClose={() => setShowAdOverlay(false)}
-            />
-        </div >
-    );
 }
 
-export default function VideoChat() {
+                export default function VideoChat() {
     return (
-        <Suspense fallback={<div className="h-screen bg-black text-white flex items-center justify-center">Loading Vibe...</div>}>
-            <VideoChatContent />
-        </Suspense>
-    );
+                <Suspense fallback={<div className="h-screen bg-black text-white flex items-center justify-center">Loading Vibe...</div>}>
+                    <VideoChatContent />
+                </Suspense>
+                );
 }
