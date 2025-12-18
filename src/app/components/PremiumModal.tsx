@@ -17,31 +17,37 @@ interface PremiumModalProps {
 
 export default function PremiumModal({ isOpen, onClose, socketId }: PremiumModalProps) {
     const [loading, setLoading] = useState(false);
-    const [isVerifyMode, setIsVerifyMode] = useState(false);
+    const [adState, setAdState] = useState<'idle' | 'playing' | 'completed'>('idle');
+    const [timeLeft, setTimeLeft] = useState(30);
 
-    const handlePayment = () => {
-        // Open Cosmofeed/Topmate Link
-        window.open("https://superprofile.bio/httpswwwvibemelive", "_blank");
-        setIsVerifyMode(true);
+    const startAd = () => {
+        setAdState('playing');
+        setTimeLeft(30);
+
+        // Timer Logic
+        const timer = setInterval(() => {
+            setTimeLeft((prev) => {
+                if (prev <= 1) {
+                    clearInterval(timer);
+                    handleAdComplete();
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
     };
 
-    const handleVerify = async () => {
+    const handleAdComplete = async () => {
         setLoading(true);
         try {
-            // Socket ID is needed. 
-            // Since we don't have it in props yet (legacy issue), we try to get it from window or just alert.
-            // But wait, the previous code had: const socketId = (window as any).socketId;
-            // We should stick to that hack for this file unless we pass it properly.
-
             const effectiveSocketId = socketId || (window as any).socketId;
-
             if (!effectiveSocketId) {
-                alert("Connection not found. Please refresh and try again.");
+                alert("Connection lost. Please refresh.");
                 setLoading(false);
                 return;
             }
 
-            const res = await fetch(`${SOCKET_URL}/verify-payment`, {
+            const res = await fetch(`${SOCKET_URL}/verify-ad-reward`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ socketId: effectiveSocketId }),
@@ -49,15 +55,19 @@ export default function PremiumModal({ isOpen, onClose, socketId }: PremiumModal
 
             const data = await res.json();
             if (data.status === "success") {
-                alert("Upgrade Successful! You are now Vibe+ Premium.");
-                onClose();
+                setAdState('completed');
+                setTimeout(() => {
+                    alert(`features unlocked for 2 Minutes!`);
+                    onClose();
+                    setAdState('idle'); // Reset for next time
+                }, 500);
             } else {
-                // In a real app we would check a webhook status here
-                alert("Verification failed. Please try again or contact support.");
+                alert("Something went wrong. Try again.");
+                setAdState('idle');
             }
         } catch (error) {
-            console.error("Verification failed", error);
-            alert("Something went wrong");
+            console.error("Ad Reward failed", error);
+            setAdState('idle');
         } finally {
             setLoading(false);
         }
@@ -69,86 +79,76 @@ export default function PremiumModal({ isOpen, onClose, socketId }: PremiumModal
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
-                onClick={onClose}
+                className="absolute inset-0 bg-black/90 backdrop-blur-md transition-opacity"
+                // No close on click outside while playing ad
+                onClick={adState === 'playing' ? undefined : onClose}
             />
 
             {/* Modal Content */}
-            <div className="relative w-full max-w-md bg-neutral-900 rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
+            <div className="relative w-full max-w-md bg-neutral-900 rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300 border border-white/10">
 
-                {/* Shiny Gradient Border Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 p-[1px]">
-                    <div className="absolute inset-0 bg-neutral-900 rounded-3xl m-[1px]" />
-                </div>
+                {adState === 'playing' ? (
+                    <div className="relative aspect-video bg-black flex flex-col items-center justify-center space-y-4 p-8">
+                        {/* Mock Video Player UI */}
+                        <div className="absolute top-4 right-4 bg-black/50 px-3 py-1 rounded-full text-xs font-mono text-white/70 border border-white/10">
+                            Ad · {timeLeft}s
+                        </div>
 
-                <div className="relative p-8 text-center space-y-6">
-                    <button
-                        onClick={onClose}
-                        className="absolute top-4 right-4 p-2 text-neutral-400 hover:text-white transition-colors"
-                    >
-                        <X size={20} />
-                    </button>
+                        <div className="w-16 h-16 rounded-full border-4 border-t-pink-500 border-r-purple-500 border-b-blue-500 border-l-transparent animate-spin" />
 
-                    <div className="space-y-2">
-                        <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
-                            Unlock Vibe+
-                        </h2>
-                        <p className="text-neutral-400">
-                            Filter who you match with. Stop wasting time.
+                        <p className="text-white font-medium animate-pulse">
+                            Watching Ad...
+                        </p>
+                        <p className="text-xs text-neutral-500 text-center uppercase tracking-widest">
+                            Do not close this window
                         </p>
                     </div>
-
-                    <div className="space-y-3 text-left bg-neutral-800/50 p-6 rounded-2xl border border-white/5">
-                        <div className="flex items-center gap-3">
-                            <div className="p-1 bg-green-500/20 text-green-400 rounded-full"><Check size={14} /></div>
-                            <span>Filter by <strong>Gender</strong></span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <div className="p-1 bg-green-500/20 text-green-400 rounded-full"><Check size={14} /></div>
-                            <span>Filter by <strong>Country</strong></span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <div className="p-1 bg-green-500/20 text-green-400 rounded-full"><Check size={14} /></div>
-                            <span><strong>HD Video</strong> Priority</span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <div className="p-1 bg-green-500/20 text-green-400 rounded-full"><Check size={14} /></div>
-                            <span><strong>Ad-free</strong> Experience</span>
-                        </div>
-                    </div>
-
-                    {!isVerifyMode ? (
+                ) : (
+                    <div className="relative p-8 text-center space-y-6">
                         <button
-                            onClick={handlePayment}
-                            className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold text-lg rounded-xl shadow-lg transform hover:scale-[1.02] transition-all"
+                            onClick={onClose}
+                            className="absolute top-4 right-4 p-2 text-neutral-400 hover:text-white transition-colors"
                         >
-                            Get Vibe+ for ₹99
+                            <X size={20} />
                         </button>
-                    ) : (
-                        <div className="space-y-3">
-                            <p className="text-sm text-yellow-400">
-                                Please change 'quantity' to 1 if needed and complete payment.
-                            </p>
-                            <button
-                                onClick={handleVerify}
-                                disabled={loading}
-                                className="w-full py-4 bg-green-600 hover:bg-green-500 text-white font-bold text-lg rounded-xl shadow-lg transform hover:scale-[1.02] transition-all disabled:opacity-50"
-                            >
-                                {loading ? "Verifying..." : "I have paid, Enable Premium"}
-                            </button>
-                            <button
-                                onClick={() => setIsVerifyMode(false)}
-                                className="text-sm text-neutral-400 hover:text-white underline"
-                            >
-                                Back
-                            </button>
-                        </div>
-                    )}
 
-                    <p className="text-xs text-neutral-500">
-                        Secure processing. Cancel anytime.
-                    </p>
-                </div>
+                        <div className="space-y-2">
+                            <h2 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                                Unlock Filters Free
+                            </h2>
+                            <p className="text-neutral-400 text-sm">
+                                Watch a short video to unlock Gender & Country filters.
+                            </p>
+                        </div>
+
+                        <div className="space-y-3 text-left bg-neutral-800/50 p-6 rounded-2xl border border-white/5">
+                            <div className="flex items-center gap-3">
+                                <div className="p-1 bg-green-500/20 text-green-400 rounded-full"><Check size={14} /></div>
+                                <span>Filter by <strong>Gender</strong></span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <div className="p-1 bg-green-500/20 text-green-400 rounded-full"><Check size={14} /></div>
+                                <span>Filter by <strong>Country</strong></span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <div className="p-1 bg-yellow-500/20 text-yellow-400 rounded-full"><Check size={14} /></div>
+                                <span><strong>2 Minutes</strong> Access</span>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={startAd}
+                            className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-lg rounded-xl shadow-lg transform hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
+                        >
+                            <span>Watch Ad (30s)</span>
+                            <span className="bg-white/20 text-xs px-2 py-0.5 rounded">FREE</span>
+                        </button>
+
+                        <p className="text-xs text-neutral-500">
+                            Support us by watching a short message.
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -92,44 +92,40 @@ function findMatch(myId) {
     .map(id => users[id])      // Get user objects
     .filter(u => u);           // Filter out any undefineds
 
-  // 1. If I am Premium and want a specific gender
-  if (myUser.isPremium && myUser.targetGender !== 'any') {
+  // 1. If I am Premium (and time hasn't expired) and want a specific gender
+  const isPremium = myUser.premiumExpiry && myUser.premiumExpiry > Date.now();
+  if (isPremium && myUser.targetGender !== 'any') {
     const exactMatch = pool.find(u => u.gender === myUser.targetGender);
     if (exactMatch) return exactMatch;
   }
 
   // 2. If I am Free (or Premium with 'any'), match with anyone
-  // Ideally, we should also check if the *other* person has filtered ME out.
-  // For MVP, simplistic matching:
   return pool.find(u => {
     // Make sure the other user hasn't filtered ME out
-    if (u.isPremium && u.targetGender !== 'any') {
+    const otherIsPremium = u.premiumExpiry && u.premiumExpiry > Date.now();
+    if (otherIsPremium && u.targetGender !== 'any') {
       return u.targetGender === myUser.gender;
     }
     return true;
   });
 }
 
-// Razorpay Endpoints REMOVED
-
-// Simplified "Trust" Verification for Cosmofeed/Topmate
-app.post("/verify-payment", (req, res) => {
+// Rewarded Ad Verification Endpoint
+app.post("/verify-ad-reward", (req, res) => {
   const { socketId } = req.body;
 
   if (!socketId) {
     return res.status(400).json({ status: "failure", message: "Socket ID required" });
   }
 
-  // Payment Success (Mock/Trust Mode)
-  console.log(`Manual Payment verified for user ${socketId}`);
-
-  // Mark user as premium in memory
   if (users[socketId]) {
-    users[socketId].isPremium = true;
-    console.log(`User ${socketId} upgraded to PREMIUM`);
-    res.json({ status: "success" });
+    // Grant 2 minutes of premium time
+    const duration = 2 * 60 * 1000;
+    users[socketId].premiumExpiry = Date.now() + duration;
+
+    console.log(`User ${socketId} watched ad. Premium until: ${new Date(users[socketId].premiumExpiry).toLocaleTimeString()}`);
+    res.json({ status: "success", expiry: users[socketId].premiumExpiry });
   } else {
-    // User might have disconnected or invalid ID
     res.status(404).json({ status: "failure", message: "User not found" });
   }
 });
