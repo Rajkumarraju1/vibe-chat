@@ -118,13 +118,32 @@ export default function Home() {
               </button>
             </div>
 
+
+            {/* About Section (SEO & AdSense) */}
+            <div className="max-w-4xl mx-auto mt-24 text-center space-y-8 px-4 border-t border-white/10 pt-16">
+              <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+                About VibeMe
+              </h2>
+              <div className="text-neutral-400 space-y-6 leading-relaxed text-sm md:text-base">
+                <p>
+                  VibeMe is the premier destination for free random video chat, offering a modern and secure alternative to platforms like Omegle and OmeTV. Our mission is to connect people from all corners of the globe instantly, fostering new friendships and meaningful conversations without barriers. We believe in the power of face-to-face interaction to bridge cultural gaps and bring the world closer together.
+                </p>
+                <p>
+                  Unlike other random chat sites, VibeMe prioritizes user experience with high-definition video quality, low-latency connections, and mobile-optimized design. Whether you are looking to make new friends, practice a new language, or simply kill time, our platform provides a safe and engaging environment. We employ community monitoring and reporting features to ensure a respectful atmosphere for all users.
+                </p>
+                <p>
+                  Start chatting today completely free. No registration is required to match with strangers. Simply choose your preferences and let our smart matching algorithm find the perfect connection for you. Join the thousands of users already enjoying the future of random video chat.
+                </p>
+              </div>
+            </div>
+
             {/* Footer Links (AdSense Requirement) */}
-            <div className="mt-8 flex flex-wrap gap-4 justify-center text-xs text-neutral-500">
-              <Link href="/privacy" className="hover:text-neutral-300 transition-colors">Privacy Policy</Link>
-              <Link href="/contact" className="hover:text-neutral-300 transition-colors">Contact Us</Link>
-              <Link href="/terms" className="hover:text-neutral-300 transition-colors">Terms of Service</Link>
-              <Link href="/cancellation-refund" className="hover:text-neutral-300 transition-colors">Cancellation & Refund</Link>
-              <Link href="/shipping" className="hover:text-neutral-300 transition-colors">Shipping Policy</Link>
+            <div className="mt-16 flex flex-wrap gap-6 justify-center text-xs text-neutral-500 border-t border-white/5 pt-8 w-full pb-8">
+              <Link href="/privacy" className="hover:text-purple-400 transition-colors">Privacy Policy</Link>
+              <Link href="/contact" className="hover:text-purple-400 transition-colors">Contact Us</Link>
+              <Link href="/terms" className="hover:text-purple-400 transition-colors">Terms of Service</Link>
+              <Link href="/cancellation-refund" className="hover:text-purple-400 transition-colors">Cancellation & Refund</Link>
+              <Link href="/shipping" className="hover:text-purple-400 transition-colors">Shipping Policy</Link>
             </div>
           </div>
         </div>
