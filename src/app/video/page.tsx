@@ -212,118 +212,113 @@ function VideoChatContent() {
             </div>
 
             {/* Main Content Area */}
-            <div className="flex-1 flex flex-col md:flex-row min-h-0 overflow-hidden">
+            <div className="flex-1 relative md:flex md:flex-row min-h-0 overflow-hidden">
                 {/* Video Stage */}
-                <div className="md:flex-1 h-[40dvh] md:h-auto relative bg-neutral-900 flex items-center justify-center p-4">
+                <div className="absolute inset-0 z-0 md:relative md:flex-1 md:inset-auto bg-neutral-900 flex items-center justify-center overflow-hidden">
                     {/* Partner Video (Main) */}
-                    <div className="relative w-full h-full max-h-full rounded-2xl overflow-hidden bg-black shadow-2xl ring-1 ring-white/10">
+                    <div className="relative w-full h-full md:max-h-full md:rounded-2xl md:overflow-hidden md:bg-black md:shadow-2xl md:ring-1 md:ring-white/10 md:m-4">
                         {searching ? (
-                            <div className="absolute inset-0 flex flex-col items-center justify-center text-neutral-500">
+                            <div className="absolute inset-0 flex flex-col items-center justify-center text-neutral-500 bg-black/50 backdrop-blur-sm z-10">
                                 <div className="w-16 h-16 border-4 border-neutral-700 border-t-purple-500 rounded-full animate-spin mb-4"></div>
-                                <p>Looking for someone...</p>
+                                <p className="text-white/80 font-medium">Finding a partner...</p>
                             </div>
                         ) : (
                             <video
                                 ref={partnerVideo}
                                 playsInline
                                 autoPlay
-                                className="w-full h-full object-contain"
+                                className="w-full h-full object-cover md:object-contain"
                             />
                         )}
                         {!partnerStream && !searching && (
-                            <div className="absolute inset-0 flex items-center justify-center text-neutral-500">Stranger has no video</div>
+                            <div className="absolute inset-0 flex items-center justify-center text-neutral-500 bg-black">Stranger has no video</div>
                         )}
 
-                        {/* Controls Overlay */}
-                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 px-4 py-2 bg-black/30 backdrop-blur-md rounded-full border border-white/10 shadow-lg opacity-100 md:opacity-0 md:hover:opacity-100 transition-all duration-300">
-                            <button onClick={toggleMic} className={clsx("p-3 rounded-full transition-colors", micOn ? "bg-white/10 hover:bg-white/20" : "bg-red-500/80 text-white")}>
-                                {micOn ? <Mic size={20} /> : <MicOff size={20} />}
-                            </button>
-                            <button onClick={toggleCam} className={clsx("p-3 rounded-full transition-colors", camOn ? "bg-white/10 hover:bg-white/20" : "bg-red-500/80 text-white")}>
-                                {camOn ? <VideoIcon size={20} /> : <VideoOff size={20} />}
-                            </button>
+                        {/* Controls Overlay - Floating at bottom for Mobile, Hover for Desktop */}
+                        <div className="absolute bottom-20 left-0 right-0 z-50 flex justify-center pb-2 md:bottom-6 md:pb-0 pointer-events-auto">
+                            <div className="flex items-center gap-3 px-6 py-3 bg-black/40 backdrop-blur-xl rounded-full border border-white/10 shadow-2xl">
+                                <button onClick={toggleMic} className={clsx("p-3 rounded-full transition-colors", micOn ? "bg-white/10 hover:bg-white/20" : "bg-red-500 text-white")}>
+                                    {micOn ? <Mic size={20} /> : <MicOff size={20} />}
+                                </button>
+                                <button onClick={toggleCam} className={clsx("p-3 rounded-full transition-colors", camOn ? "bg-white/10 hover:bg-white/20" : "bg-red-500 text-white")}>
+                                    {camOn ? <VideoIcon size={20} /> : <VideoOff size={20} />}
+                                </button>
 
-                            {/* Filter Buttons (Trigger Premium) */}
-                            <div className="hidden md:block h-8 w-px bg-white/10 mx-1"></div>
-                            <button onClick={() => setShowPremiumModal(true)} className="hidden md:block p-3 rounded-full bg-white/10 hover:bg-purple-500/20 text-white hover:text-purple-400 transition-colors group relative">
-                                <Users size={20} className={targetGender === 'female' ? "text-pink-500" : ""} />
-                                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                                    {targetGender === 'female' ? "Filter Active" : "Filter Female"}
-                                </span>
-                            </button>
-                            <button onClick={() => setShowPremiumModal(true)} className="hidden md:block p-3 rounded-full bg-white/10 hover:bg-blue-500/20 text-white hover:text-blue-400 transition-colors group relative">
-                                <Globe size={20} />
-                                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Country</span>
-                            </button>
-                            <div className="hidden md:block h-8 w-px bg-white/10 mx-1"></div>
+                                {/* Filter Buttons (Trigger Premium) */}
+                                <div className="h-8 w-px bg-white/10 mx-1"></div>
+                                <button onClick={() => setShowPremiumModal(true)} className="hidden md:block p-3 rounded-full bg-white/10 hover:bg-purple-500/20 text-white hover:text-purple-400 transition-colors">
+                                    <Users size={20} className={targetGender === 'female' ? "text-pink-500" : ""} />
+                                </button>
+                                <button onClick={() => setShowPremiumModal(true)} className="hidden md:block p-3 rounded-full bg-white/10 hover:bg-blue-500/20 text-white hover:text-blue-400 transition-colors">
+                                    <Globe size={20} />
+                                </button>
+                                <div className="hidden md:block h-8 w-px bg-white/10 mx-1"></div>
 
-                            <button onClick={handleSkip} className="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-full font-bold transition-colors flex items-center gap-2">
-                                <SkipForward size={18} fill="currentColor" />
-                                Next
-                            </button>
+                                <button onClick={handleSkip} className="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-full font-bold transition-transform active:scale-95 flex items-center gap-2 shadow-[0_0_20px_rgba(147,51,234,0.3)]">
+                                    <SkipForward size={18} fill="currentColor" />
+                                    Next
+                                </button>
+                            </div>
                         </div>
                     </div>
 
-                    {/* My Video */}
-                    <div className="absolute top-4 right-4 w-24 md:top-8 md:right-8 md:w-48 aspect-video bg-black rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)] border-2 border-white/10 hover:border-purple-500 transition-colors group">
+                    {/* My Video - Floating Top Right */}
+                    <div className="absolute top-20 right-4 w-28 aspect-[3/4] z-20 md:top-8 md:right-8 md:w-48 md:aspect-video bg-black rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)] border-2 border-white/10 group cursor-pointer hover:border-purple-500 transition-all">
                         <video ref={myVideo} playsInline autoPlay muted className={clsx("w-full h-full object-cover mirror-mode transition-opacity", !camOn && "opacity-0")} />
                         {!camOn && <div className="absolute inset-0 flex items-center justify-center bg-neutral-800 text-xs text-neutral-400">Camera Off</div>}
-                        <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/60 rounded text-[10px] text-white/70">You</div>
                     </div>
                 </div>
 
-                {/* Chat Sidebar */}
-                <div className="flex-1 min-h-0 md:h-auto w-full md:w-96 bg-neutral-950 border-l border-white/5 flex flex-col z-30 shadow-2xl">
-                    <div className="p-4 border-b border-white/5 bg-neutral-900/50">
-                        <h2 className="text-sm font-semibold text-neutral-400 uppercase tracking-wider">Chat</h2>
-                    </div>
-                    {/* Messages */}
-                    <div className="flex-1 p-4 overflow-y-auto space-y-4 scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent">
-                        <div className="text-center text-xs text-neutral-600 my-4">
-                            You are chatting with a random stranger. Say Hi!
+                {/* Chat Sidebar / Overlay */}
+                <div className="absolute bottom-0 left-0 right-0 h-[45%] z-10 pointer-events-none md:pointer-events-auto md:static md:h-auto md:w-96 md:bg-neutral-950 md:border-l md:border-white/5 md:flex md:flex-col md:shadow-2xl">
+                    <div className="w-full h-full flex flex-col bg-gradient-to-t from-black via-black/80 to-transparent md:bg-none pointer-events-auto">
+                        <div className="hidden md:block p-4 border-b border-white/5 bg-neutral-900/50">
+                            <h2 className="text-sm font-semibold text-neutral-400 uppercase tracking-wider">Chat</h2>
                         </div>
-                        {chat.map((msg, i) => (
-                            <div key={i} className={clsx("flex flex-col max-w-[85%]", msg.sender === "You" ? "ml-auto items-end" : "mr-auto items-start")}>
-                                <div className={clsx("px-4 py-2 rounded-2xl text-sm",
-                                    msg.sender === "You"
-                                        ? "bg-purple-600 text-white rounded-br-none"
-                                        : "bg-neutral-800 text-neutral-200 rounded-bl-none"
-                                )}>
-                                    {msg.text}
+
+                        {/* Messages */}
+                        <div className="flex-1 p-4 overflow-y-auto space-y-3 [&::-webkit-scrollbar]:hidden flex flex-col justify-end md:justify-start">
+                            <div className="text-center text-xs text-white/50 my-4 md:text-neutral-600">
+                                You are chatting with a random stranger. Say Hi!
+                            </div>
+                            {chat.map((msg, i) => (
+                                <div key={i} className={clsx("flex flex-col max-w-[85%] animate-in fade-in slide-in-from-bottom-2", msg.sender === "You" ? "ml-auto items-end" : "mr-auto items-start")}>
+                                    <div className={clsx("px-4 py-2 rounded-2xl text-sm backdrop-blur-md shadow-sm",
+                                        msg.sender === "You"
+                                            ? "bg-purple-600 text-white rounded-br-none"
+                                            : "bg-white/10 text-white border border-white/10 rounded-bl-none md:bg-neutral-800 md:text-neutral-200"
+                                    )}>
+                                        {msg.text}
+                                    </div>
+                                    <span className="text-[10px] text-white/50 mt-1 px-1">{msg.sender}</span>
                                 </div>
-                                <span className="text-[10px] text-neutral-600 mt-1 px-1">{msg.sender}</span>
-                            </div>
-                        ))}
-                        {searching && !chat.length && (
-                            <div className="flex flex-col items-center justify-center h-full text-neutral-600 pb-10 opacity-50">
-                                <p className="text-sm">Connecting...</p>
-                            </div>
-                        )}
-                    </div>
+                            ))}
+                        </div>
 
-                    {/* Banner Ad */}
-                    <div className="bg-neutral-900 border-t border-white/5">
-                        <AdBanner />
-                    </div>
+                        {/* Banner Ad (Desktop Only mainly, or hidden if interfering) */}
+                        <div className="hidden md:block bg-neutral-900 border-t border-white/5">
+                            <AdBanner />
+                        </div>
 
-                    {/* Input */}
-                    <div className="p-4 bg-black/20 backdrop-blur border-t border-white/5">
-                        <div className="flex gap-2 relative">
-                            <input
-                                value={message}
-                                onChange={e => setMessage(e.target.value)}
-                                onKeyDown={e => e.key === 'Enter' && sendMessage()}
-                                placeholder="Type a message..."
-                                disabled={searching}
-                                className="w-full bg-neutral-900/80 text-white border border-white/10 rounded-xl pl-4 pr-12 py-3.5 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 placeholder:text-neutral-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                            />
-                            <button
-                                onClick={sendMessage}
-                                disabled={searching || !message.trim()}
-                                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors disabled:opacity-0 disabled:scale-75 transform duration-200"
-                            >
-                                <Send size={16} />
-                            </button>
+                        {/* Input */}
+                        <div className="p-3 bg-black/80 backdrop-blur-xl border-t border-white/10 md:p-4 md:bg-black/20 md:border-white/5 pb-6 md:pb-4">
+                            <div className="flex gap-2 relative">
+                                <input
+                                    value={message}
+                                    onChange={e => setMessage(e.target.value)}
+                                    onKeyDown={e => e.key === 'Enter' && sendMessage()}
+                                    placeholder="Type a message..."
+                                    disabled={searching}
+                                    className="w-full bg-white/10 text-white border border-white/10 rounded-full pl-4 pr-12 py-3 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 placeholder:text-white/40 transition-all disabled:opacity-50"
+                                />
+                                <button
+                                    onClick={sendMessage}
+                                    disabled={searching || !message.trim()}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-purple-600 hover:bg-purple-500 text-white rounded-full transition-colors disabled:opacity-0 disabled:scale-75 transform duration-200"
+                                >
+                                    <Send size={16} />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
