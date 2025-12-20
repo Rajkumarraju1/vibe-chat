@@ -257,21 +257,24 @@ function VideoChatContent() {
                     </div>
                 </div>
 
-                {/* Mobile Controls (Floating High Z-Index) */}
+                {/* Mobile Filter Controls (Top Left) */}
+                <div className="md:hidden absolute top-20 left-4 z-50 flex flex-col gap-2 pointer-events-auto">
+                    <button onClick={() => setShowPremiumModal(true)} className="p-3 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white hover:text-purple-400 transition-colors shadow-lg">
+                        <Users size={20} className={targetGender === 'female' ? "text-pink-500" : ""} />
+                    </button>
+                    <button onClick={() => setShowPremiumModal(true)} className="p-3 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white hover:text-blue-400 transition-colors shadow-lg">
+                        <Globe size={20} />
+                    </button>
+                </div>
+
+                {/* Mobile Controls (Bottom Center - Mic/Cam/Next only) */}
                 <div className="md:hidden absolute bottom-24 left-0 right-0 z-30 flex justify-center pb-2 pointer-events-auto">
-                    <div className="flex items-center gap-3 px-6 py-3 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 shadow-2xl">
+                    <div className="flex items-center gap-4 px-6 py-3 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 shadow-2xl">
                         <button onClick={toggleMic} className={clsx("p-3 rounded-full transition-colors", micOn ? "bg-white/10 hover:bg-white/20" : "bg-red-500 text-white")}>
                             {micOn ? <Mic size={20} /> : <MicOff size={20} />}
                         </button>
                         <button onClick={toggleCam} className={clsx("p-3 rounded-full transition-colors", camOn ? "bg-white/10 hover:bg-white/20" : "bg-red-500 text-white")}>
                             {camOn ? <VideoIcon size={20} /> : <VideoOff size={20} />}
-                        </button>
-                        <div className="h-8 w-px bg-white/10 mx-1"></div>
-                        <button onClick={() => setShowPremiumModal(true)} className="p-3 rounded-full bg-white/10 hover:bg-purple-500/20 text-white hover:text-purple-400 transition-colors">
-                            <Users size={20} className={targetGender === 'female' ? "text-pink-500" : ""} />
-                        </button>
-                        <button onClick={() => setShowPremiumModal(true)} className="p-3 rounded-full bg-white/10 hover:bg-blue-500/20 text-white hover:text-blue-400 transition-colors">
-                            <Globe size={20} />
                         </button>
                         <div className="h-8 w-px bg-white/10 mx-1"></div>
                         <button onClick={handleSkip} className="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-full font-bold transition-transform active:scale-95 flex items-center gap-2 shadow-[0_0_20px_rgba(147,51,234,0.3)]">
@@ -281,8 +284,8 @@ function VideoChatContent() {
                     </div>
                 </div>
 
-                {/* My Video - Floating Bottom Right (High Z-Index) */}
-                <div className="absolute bottom-28 right-4 w-28 aspect-[3/4] z-20 md:top-8 md:right-8 md:w-48 md:aspect-video bg-black rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)] border-2 border-white/10 group cursor-pointer hover:border-purple-500 transition-all">
+                {/* My Video - Floating Top Right (High Z-Index) */}
+                <div className="absolute top-20 right-4 w-28 aspect-[3/4] z-40 md:top-8 md:right-8 md:w-48 md:aspect-video bg-black rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)] border-2 border-white/10 group cursor-pointer hover:border-purple-500 transition-all">
                     <video ref={myVideo} playsInline autoPlay muted className={clsx("w-full h-full object-cover mirror-mode transition-opacity", !camOn && "opacity-0")} />
                     {!camOn && <div className="absolute inset-0 flex items-center justify-center bg-neutral-800 text-xs text-neutral-400">Camera Off</div>}
                 </div>
@@ -295,8 +298,8 @@ function VideoChatContent() {
                         </div>
 
                         {/* Messages */}
-                        <div className="flex-1 p-4 overflow-y-auto space-y-3 [&::-webkit-scrollbar]:hidden flex flex-col justify-end md:justify-start pb-24">
-                            <div className="text-center text-xs text-white/50 my-4 md:text-neutral-600">
+                        <div className="flex-1 p-4 overflow-y-auto space-y-3 [&::-webkit-scrollbar]:hidden flex flex-col justify-end md:justify-start pb-20 md:pb-4">
+                            <div className="hidden md:block text-center text-xs text-neutral-600 my-4">
                                 You are chatting with a random stranger. Say Hi!
                             </div>
                             {chat.map((msg, i) => (
