@@ -213,7 +213,7 @@ function VideoChatContent() {
 
             {/* Main Content Area */}
             <div className="flex-1 relative md:flex md:flex-row min-h-0 overflow-hidden">
-                {/* Video Stage */}
+                {/* Video Stage (Background Layer on Mobile) */}
                 <div className="absolute inset-0 z-0 md:relative md:flex-1 md:inset-auto bg-neutral-900 flex items-center justify-center overflow-hidden">
                     {/* Partner Video (Main) */}
                     <div className="relative w-full h-full md:max-h-full md:rounded-2xl md:overflow-hidden md:bg-black md:shadow-2xl md:ring-1 md:ring-white/10 md:m-4">
@@ -233,51 +233,69 @@ function VideoChatContent() {
                         {!partnerStream && !searching && (
                             <div className="absolute inset-0 flex items-center justify-center text-neutral-500 bg-black">Stranger has no video</div>
                         )}
-
-                        {/* Controls Overlay - Floating at bottom for Mobile, Hover for Desktop */}
-                        <div className="absolute bottom-20 left-0 right-0 z-50 flex justify-center pb-2 md:bottom-6 md:pb-0 pointer-events-auto">
-                            <div className="flex items-center gap-3 px-6 py-3 bg-black/40 backdrop-blur-xl rounded-full border border-white/10 shadow-2xl">
-                                <button onClick={toggleMic} className={clsx("p-3 rounded-full transition-colors", micOn ? "bg-white/10 hover:bg-white/20" : "bg-red-500 text-white")}>
-                                    {micOn ? <Mic size={20} /> : <MicOff size={20} />}
-                                </button>
-                                <button onClick={toggleCam} className={clsx("p-3 rounded-full transition-colors", camOn ? "bg-white/10 hover:bg-white/20" : "bg-red-500 text-white")}>
-                                    {camOn ? <VideoIcon size={20} /> : <VideoOff size={20} />}
-                                </button>
-
-                                {/* Filter Buttons (Trigger Premium) */}
-                                <div className="h-8 w-px bg-white/10 mx-1"></div>
-                                <button onClick={() => setShowPremiumModal(true)} className="hidden md:block p-3 rounded-full bg-white/10 hover:bg-purple-500/20 text-white hover:text-purple-400 transition-colors">
-                                    <Users size={20} className={targetGender === 'female' ? "text-pink-500" : ""} />
-                                </button>
-                                <button onClick={() => setShowPremiumModal(true)} className="hidden md:block p-3 rounded-full bg-white/10 hover:bg-blue-500/20 text-white hover:text-blue-400 transition-colors">
-                                    <Globe size={20} />
-                                </button>
-                                <div className="hidden md:block h-8 w-px bg-white/10 mx-1"></div>
-
-                                <button onClick={handleSkip} className="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-full font-bold transition-transform active:scale-95 flex items-center gap-2 shadow-[0_0_20px_rgba(147,51,234,0.3)]">
-                                    <SkipForward size={18} fill="currentColor" />
-                                    Next
-                                </button>
-                            </div>
+                        {/* Desktop Controls (Overlay only on hover/desktop) */}
+                        <div className="hidden md:flex absolute bottom-6 left-1/2 -translate-x-1/2 items-center gap-3 px-4 py-2 bg-black/30 backdrop-blur-md rounded-full border border-white/10 shadow-lg opacity-0 hover:opacity-100 transition-all duration-300 z-50">
+                            <button onClick={toggleMic} className={clsx("p-3 rounded-full transition-colors", micOn ? "bg-white/10 hover:bg-white/20" : "bg-red-500/80 text-white")}>
+                                {micOn ? <Mic size={20} /> : <MicOff size={20} />}
+                            </button>
+                            <button onClick={toggleCam} className={clsx("p-3 rounded-full transition-colors", camOn ? "bg-white/10 hover:bg-white/20" : "bg-red-500/80 text-white")}>
+                                {camOn ? <VideoIcon size={20} /> : <VideoOff size={20} />}
+                            </button>
+                            <div className="h-8 w-px bg-white/10 mx-1"></div>
+                            <button onClick={() => setShowPremiumModal(true)} className="p-3 rounded-full bg-white/10 hover:bg-purple-500/20 text-white hover:text-purple-400 transition-colors">
+                                <Users size={20} className={targetGender === 'female' ? "text-pink-500" : ""} />
+                            </button>
+                            <button onClick={() => setShowPremiumModal(true)} className="p-3 rounded-full bg-white/10 hover:bg-blue-500/20 text-white hover:text-blue-400 transition-colors">
+                                <Globe size={20} />
+                            </button>
+                            <div className="h-8 w-px bg-white/10 mx-1"></div>
+                            <button onClick={handleSkip} className="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-full font-bold transition-colors flex items-center gap-2">
+                                <SkipForward size={18} fill="currentColor" />
+                                Next
+                            </button>
                         </div>
-                    </div>
-
-                    {/* My Video - Floating Top Right */}
-                    <div className="absolute top-20 right-4 w-28 aspect-[3/4] z-20 md:top-8 md:right-8 md:w-48 md:aspect-video bg-black rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)] border-2 border-white/10 group cursor-pointer hover:border-purple-500 transition-all">
-                        <video ref={myVideo} playsInline autoPlay muted className={clsx("w-full h-full object-cover mirror-mode transition-opacity", !camOn && "opacity-0")} />
-                        {!camOn && <div className="absolute inset-0 flex items-center justify-center bg-neutral-800 text-xs text-neutral-400">Camera Off</div>}
                     </div>
                 </div>
 
+                {/* Mobile Controls (Floating High Z-Index) */}
+                <div className="md:hidden absolute bottom-24 left-0 right-0 z-30 flex justify-center pb-2 pointer-events-auto">
+                    <div className="flex items-center gap-3 px-6 py-3 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 shadow-2xl">
+                        <button onClick={toggleMic} className={clsx("p-3 rounded-full transition-colors", micOn ? "bg-white/10 hover:bg-white/20" : "bg-red-500 text-white")}>
+                            {micOn ? <Mic size={20} /> : <MicOff size={20} />}
+                        </button>
+                        <button onClick={toggleCam} className={clsx("p-3 rounded-full transition-colors", camOn ? "bg-white/10 hover:bg-white/20" : "bg-red-500 text-white")}>
+                            {camOn ? <VideoIcon size={20} /> : <VideoOff size={20} />}
+                        </button>
+                        <div className="h-8 w-px bg-white/10 mx-1"></div>
+                        <button onClick={() => setShowPremiumModal(true)} className="p-3 rounded-full bg-white/10 hover:bg-purple-500/20 text-white hover:text-purple-400 transition-colors">
+                            <Users size={20} className={targetGender === 'female' ? "text-pink-500" : ""} />
+                        </button>
+                        <button onClick={() => setShowPremiumModal(true)} className="p-3 rounded-full bg-white/10 hover:bg-blue-500/20 text-white hover:text-blue-400 transition-colors">
+                            <Globe size={20} />
+                        </button>
+                        <div className="h-8 w-px bg-white/10 mx-1"></div>
+                        <button onClick={handleSkip} className="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-full font-bold transition-transform active:scale-95 flex items-center gap-2 shadow-[0_0_20px_rgba(147,51,234,0.3)]">
+                            <SkipForward size={18} fill="currentColor" />
+                            Next
+                        </button>
+                    </div>
+                </div>
+
+                {/* My Video - Floating Bottom Right (High Z-Index) */}
+                <div className="absolute bottom-28 right-4 w-28 aspect-[3/4] z-20 md:top-8 md:right-8 md:w-48 md:aspect-video bg-black rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)] border-2 border-white/10 group cursor-pointer hover:border-purple-500 transition-all">
+                    <video ref={myVideo} playsInline autoPlay muted className={clsx("w-full h-full object-cover mirror-mode transition-opacity", !camOn && "opacity-0")} />
+                    {!camOn && <div className="absolute inset-0 flex items-center justify-center bg-neutral-800 text-xs text-neutral-400">Camera Off</div>}
+                </div>
+
                 {/* Chat Sidebar / Overlay */}
-                <div className="absolute bottom-0 left-0 right-0 h-[45%] z-10 pointer-events-none md:pointer-events-auto md:static md:h-auto md:w-96 md:bg-neutral-950 md:border-l md:border-white/5 md:flex md:flex-col md:shadow-2xl">
+                <div className="absolute bottom-0 left-0 right-0 h-[50%] z-10 pointer-events-none md:pointer-events-auto md:static md:h-auto md:w-96 md:bg-neutral-950 md:border-l md:border-white/5 md:flex md:flex-col md:shadow-2xl">
                     <div className="w-full h-full flex flex-col bg-gradient-to-t from-black via-black/80 to-transparent md:bg-none pointer-events-auto">
                         <div className="hidden md:block p-4 border-b border-white/5 bg-neutral-900/50">
                             <h2 className="text-sm font-semibold text-neutral-400 uppercase tracking-wider">Chat</h2>
                         </div>
 
                         {/* Messages */}
-                        <div className="flex-1 p-4 overflow-y-auto space-y-3 [&::-webkit-scrollbar]:hidden flex flex-col justify-end md:justify-start">
+                        <div className="flex-1 p-4 overflow-y-auto space-y-3 [&::-webkit-scrollbar]:hidden flex flex-col justify-end md:justify-start pb-24">
                             <div className="text-center text-xs text-white/50 my-4 md:text-neutral-600">
                                 You are chatting with a random stranger. Say Hi!
                             </div>
