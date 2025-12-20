@@ -254,10 +254,14 @@ function VideoChatContent() {
                                 Next
                             </button>
                         </div>
+
+                        {/* My Video - Floating Top Right (High Z-Index) */}
+                        <div className="absolute top-20 right-4 w-28 aspect-[3/4] z-40 md:top-8 md:right-8 md:w-48 md:aspect-video bg-black rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)] border-2 border-white/10 group cursor-pointer hover:border-purple-500 transition-all">
+                            <video ref={myVideo} playsInline autoPlay muted className={clsx("w-full h-full object-cover mirror-mode transition-opacity", !camOn && "opacity-0")} />
+                            {!camOn && <div className="absolute inset-0 flex items-center justify-center bg-neutral-800 text-xs text-neutral-400">Camera Off</div>}
+                        </div>
                     </div>
                 </div>
-
-                {/* Mobile Filter Controls (Top Left) */}
                 <div className="md:hidden absolute top-20 left-4 z-50 flex flex-col gap-2 pointer-events-auto">
                     <button onClick={() => setShowPremiumModal(true)} className="p-3 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white hover:text-purple-400 transition-colors shadow-lg">
                         <Users size={20} className={targetGender === 'female' ? "text-pink-500" : ""} />
@@ -284,11 +288,7 @@ function VideoChatContent() {
                     </div>
                 </div>
 
-                {/* My Video - Floating Top Right (High Z-Index) */}
-                <div className="absolute top-20 right-4 w-28 aspect-[3/4] z-40 md:top-8 md:right-8 md:w-48 md:aspect-video bg-black rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)] border-2 border-white/10 group cursor-pointer hover:border-purple-500 transition-all">
-                    <video ref={myVideo} playsInline autoPlay muted className={clsx("w-full h-full object-cover mirror-mode transition-opacity", !camOn && "opacity-0")} />
-                    {!camOn && <div className="absolute inset-0 flex items-center justify-center bg-neutral-800 text-xs text-neutral-400">Camera Off</div>}
-                </div>
+
 
                 {/* Chat Sidebar / Overlay */}
                 <div className="absolute bottom-0 left-0 right-0 h-[50%] z-10 pointer-events-none md:pointer-events-auto md:static md:h-auto md:w-96 md:bg-neutral-950 md:border-l md:border-white/5 md:flex md:flex-col md:shadow-2xl">
